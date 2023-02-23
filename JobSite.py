@@ -127,6 +127,6 @@ for i in range(1,51):
 print(len(list_of_jobs))
 df = pd.DataFrame(format_jobs(list_of_jobs))
 date = datetime.datetime.now().strftime("%d-%m-%Y-%H-%M-%S")
-df.to_csv(f'JobSite_{date}.csv',index=False)
+df.to_csv(f'csvs/JobSite_{date}.csv',index=False)
 print('Les datas sont sauvegardé dans le CSV!')
 driver.quit()
