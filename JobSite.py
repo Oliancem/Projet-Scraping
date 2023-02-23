@@ -82,7 +82,7 @@ for i in range(1,51):
                     datadict['Location']= ""
 
                 try:
-                    datadict['Job Description'] = Item.find_element_by_xpath('//div[@class="jds-Text__3KLTn jds-Text--normal__397yB jds-RichText__2o_RW"]').text
+                    datadict['Job Description'] = Item.find_element_by_xpath('//div[@class="jds-Text__3KLTn jds-Text--normal__397yB jds-RichText__2o_RW"]').text.replace("\n", " ")
                 except:
                     datadict['Job Description'] =""
                     
