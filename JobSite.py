@@ -116,7 +116,7 @@ for i in range(1,51):
 
 
 # Cette ligne de code est utilisée pour créer un fichier csv.
-# Enfin on a ajouté l'option date-heure pour éviter la saisie de données à chaque scraping.
+# Enfin on ajoute l'option "datetime" pour éviter la saisie de données à chaque scraping.
 
 
 print(len(list_of_jobs))
