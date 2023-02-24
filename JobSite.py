@@ -38,7 +38,7 @@ options.add_argument('--disable-blink-features=AutomationControlled')
 driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options)
 list_of_jobs = []
 
-# Dans cette section, nous allons coller le lien que nous voulons effacer.  
+# Dans cette section, nous allons coller le lien que nous allons scraper.  
 # time.sleep est utilisé pour ajouter un délai dans le site Web. On peut donc l'augmenter ou le diminuer en fonction de nos besoins et de notre connexion Internet.
 # time.sleep (5) signifie un délai de 5 secondes.
 
