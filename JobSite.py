@@ -10,9 +10,9 @@ import pandas as pd
 from Job import Job
 
 def format_jobs(jobs_array):
-    jobs_data = []
-    for job in jobs_array:
-        if job:
+    jobs_data = []  # On crée un tableau pour stocker les informations sur les emplois
+    for job in jobs_array:  # Puis on fait une boucle à travers tous les emplois dans le tableau
+        if job:  # si l'emploi n'est pas nul (ou vide) on crée un dictionnaire avec des informations sur l'emploi en utilisant les méthodes de l'objet
             job_dict = {
                 'Url': job.get_url(),
                 'Title': job.get_title(),
@@ -21,12 +21,13 @@ def format_jobs(jobs_array):
                 'Location' : job.get_location(),
                 'Description': job.get_description()
             }
-            jobs_data.append(job_dict)
+            jobs_data.append(job_dict)  # puis on ajoute le dictionnaire au tableau des données d'emplois
 
-    return jobs_data
+    return jobs_data  # et on renvoye le tableau des données d'emplois
+
 
 # Cette ligne de code est utilisée pour ouvrir le pilote de chrome.
-# Comme il s'agit de sites Web contenant des javascripts, nous allons créer un lecteur de chrome virtuel afin que la sécurité du site Web ne détecte pas que vous êtes un robot.
+# Comme il s'agit de sites Web contenant des javascripts, nous allons créer un lecteur de chrome virtuel afin que la sécurité du site Web ne détecte pas que nous sommes un robot.
 
 options = webdriver.ChromeOptions() 
 options.add_argument("start-maximized")
@@ -37,22 +38,21 @@ options.add_argument('--disable-blink-features=AutomationControlled')
 driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options)
 list_of_jobs = []
 
-# Dans cette section, nous allons coller le lien que vous voulez effacer.  
-# time.sleep est utilisé pour ajouter un délai dans le site Web. Vous pouvez donc l'augmenter ou le diminuer en fonction de vos besoins et de votre connexion Internet.
-# time.sleep (10) signifie un délai de 10 secondes.
+# Dans cette section, nous allons coller le lien que nous voulons effacer.  
+# time.sleep est utilisé pour ajouter un délai dans le site Web. On peut donc l'augmenter ou le diminuer en fonction de nos besoins et de notre connexion Internet.
+# time.sleep (5) signifie un délai de 5 secondes.
 
-driver.get('https://www.jobteaser.com/fr/job-offers')
+driver.get('https://www.jobteaser.com/fr/job-offers?location=India..India&locale=en,fr')
 time.sleep(5)
 
-# Cette ligne est utilisée pour créer la pagination, car vous avez remarqué que votre site Web a 50 pages, donc notre gamme est de 1 à 51. 
-# Comme dans python 1 à 51 signifie 1 à 50 car le dernier chiffre pyhton n'est pas pris en compte.
+# Cette ligne est utilisée pour créer la pagination, car nous avons remarqué que notre site Web a 50 pages, donc notre gamme est de 1 à 51. 
+# Car dans python 1 à 51 signifie 1 à 50 car le dernier chiffre python n'est pas pris en compte.
 
 for i in range(1,51):
-# Cette ligne de code est utilisée pour trouver le nombre de jobs dans une page.
     try:
         Results = driver.find_elements_by_xpath('//a[@data-track-marketing="click:open_single_offer"]')
         for data in Results:
-            #Cette ligne de code est utilisée pour ouvrir chaque job un par un afin que nous puissions collecter les parties "description" et "remmaining".
+            #Cette ligne de code est utilisée pour ouvrir chaque job un par un afin que nous puissions collecter les données.
             #Donc simplement, c'est l'ouverture de chaque job un par un.
 
             url = data.get_attribute('href')
@@ -62,40 +62,35 @@ for i in range(1,51):
             driver.switch_to.window(chld)
             time.sleep(2)
 
-
-
-
-            #La ligne de code ci-dessous permet de trouver tous les détails du titre de l'emploi, du nom de la société signifie trouver le nom de la société et de la même manière pour tous.
-
             try:
-                # Trouver l'élément 'body' dans la page web chargée dans le navigateur.
+                # On va trouver l'élément 'body' dans la page web chargée dans le navigateur.
                 Item = driver.find_element_by_xpath('//body')
 
-                # Trouver l'élément 'h1' à l'intérieur de l'élément 'body' et récupérer son texte.
+                # Puis, on va trouver l'élément 'h1' à l'intérieur de l'élément 'body' et récupérer son texte.
                 title = Item.find_element_by_xpath('//h1').text
 
-                # Trouver l'élément 'a' qui a un attribut 'data-e2e' de valeur 'jobad-DetailView__CompanyLink'
+                # Ensuite, on va rouver l'élément 'a' qui a un attribut 'data-e2e' de valeur 'jobad-DetailView__CompanyLink'
                 # à l'intérieur de l'élément 'body', et récupérer le texte du paragraphe 'p' qu'il contient (si présent).
                 company_name = Item.find_element_by_xpath('//a[@data-e2e="jobad-DetailView__CompanyLink"]/p').text \
                     if Item.find_element_by_xpath('//a[@data-e2e="jobad-DetailView__CompanyLink"]/p') else None
 
-                # Trouver l'élément 'p' qui a les classes CSS suivantes : 'jds-Text__3KLTn', 'jds-Text--subhead-small__Up-Vq',
+                # Puis, on va trouver l'élément 'p' qui a les classes CSS suivantes : 'jds-Text__3KLTn', 'jds-Text--subhead-small__Up-Vq',
                 # 'jds-Text--resetSpacing__15GE_', 'jds-Text--weight-normal__1XPqo' et 'jo-Heading--summary__22nW8' à l'intérieur de l'élément 'body'.
-                # Récupérer le texte de cet élément, puis le diviser en sous-chaînes en utilisant le caractère '- ' comme séparateur.
+                # Ensuite, on va récupérer le texte de cet élément, puis le diviser en sous-chaînes en utilisant le caractère '- ' comme séparateur.
                 more_details = Item.find_element_by_xpath('//p[@class="jds-Text__3KLTn jds-Text--subhead-small__Up-Vq jds-Text--resetSpacing__15GE_ jds-Text--weight-normal__1XPqo jo-Heading--summary__22nW8"]').text
                 single_detail = more_details.split('- ')
 
-                # Si la variable 'single_detail' n'est pas vide, affecter sa première sous-chaîne à la variable 'type', et sa deuxième sous-chaîne à la variable 'location'.
+                # Si la variable 'single_detail' n'est pas vide, on va affecter sa première sous-chaîne à la variable 'type', et sa deuxième sous-chaîne à la variable 'location'.
                 type = single_detail[0] if single_detail else None
                 location = single_detail[1] if single_detail else None
 
-                # Trouver l'élément 'div' qui a les classes CSS suivantes : 'jds-Text__3KLTn', 'jds-Text--normal__397yB', et 'jds-RichText__2o_RW'
+                # On va trouver l'élément 'div' qui a les classes CSS suivantes : 'jds-Text__3KLTn', 'jds-Text--normal__397yB', et 'jds-RichText__2o_RW'
                 # à l'intérieur de l'élément 'body'.
-                # Récupérer le texte de cet élément, puis remplacer tous les caractères de nouvelle ligne par des espaces dans cette chaîne
+                # Puis on va récupérer le texte de cet élément, puis remplacer tous les caractères de nouvelle ligne par des espaces dans cette chaîne
                 description = Item.find_element_by_xpath('//div[@class="jds-Text__3KLTn jds-Text--normal__397yB jds-RichText__2o_RW"]')\
                                 .text.replace("\n", " ") if Item.find_element_by_xpath('//div[@class="jds-Text__3KLTn jds-Text--normal__397yB jds-RichText__2o_RW"]') else None
 
-                # Créer un nouvel objet Job avec les valeurs des variables récupérées précédemment,
+                # Enfin on va créer un nouvel objet Job avec les valeurs des variables récupérées précédemment,
                 # et ajouter cet objet à la liste 'list_of_jobs'.
                 job = Job(url, title, company_name, type, location, description)
                 list_of_jobs.append(job)
@@ -108,7 +103,7 @@ for i in range(1,51):
 
 
 
-        # Cette ligne de code est utilisée pour cliquer sur la page suivante après avoir récupéré tous les travaux de cette page...
+        # Cette ligne de code est utilisée pour cliquer sur la page suivante après avoir récupéré tous les travaux de cette page.
         # Donc on passe à la page suivante pour le scraping de la page suivante.
 
         Next_Page = driver.find_element_by_xpath('//a[@data-icon="chevronRight|alone"]')
@@ -121,7 +116,7 @@ for i in range(1,51):
 
 
 # Cette ligne de code est utilisée pour créer un fichier csv.
-# J'ai ajouté l'option date-heure pour éviter la saisie de données à chaque scraping.
+# Enfin on a ajouté l'option date-heure pour éviter la saisie de données à chaque scraping.
 
 
 print(len(list_of_jobs))
